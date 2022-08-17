@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\BookRequest;
 use App\Http\Resources\BookCollection;
 use App\Http\Resources\BookResource;
@@ -9,41 +10,27 @@ use App\Models\Author;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use function Symfony\Component\Routing\Loader\Configurator\collection;
 
 class BookController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return BookCollection
      */
     public function index()
     {
-        $books = Book::with('authors')->paginate(10);
-        return view('books.index', compact('books'));
-
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        return view('books.create');
+        return new BookCollection(Book::with('authors')->paginate(3));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param BookRequest $request
+     * @return BookResource
      */
     public function store(BookRequest $request)
     {
-
         $book = DB::transaction(function () use($request){
             $book = Book::create($request->except('authors'));
 
@@ -54,41 +41,29 @@ class BookController extends Controller
         });
 
         return new BookResource(Book::whereId($book->id)->first());
-
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Book  $book
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Book $book)
+    public function show($id)
     {
-        return new BookResource($book);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Book  $book
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Book $book)
-    {
-        return view('books.update', compact('book'));
+        return new BookResource(Book::whereId($id)->first());
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Book  $book
-     * @return \Illuminate\Http\Response
+     * @param BookRequest $request
+     * @param int $id
+     * @return BookResource
      */
-    public function update(BookRequest $request, Book $book)
+    public function update(BookRequest $request, $id)
     {
-
+        $book = Book::whereId($id)->first();
         DB::transaction(function () use($request , $book){
             $book->update($request->except('authors'));
             collect($request->authors)->map(function($author) use($book){
@@ -96,19 +71,19 @@ class BookController extends Controller
                 return $book->authors()->where('book_id',$book->id)->first()->update(['name' => $author]);
             });
         });
+        return new BookResource(Book::whereId($book->id)->first(), 200, "The book My First Book was updated successfully");
 
-        return redirect()->route('books.index')->with('success', "The book {$book->fresh()->name} was updated successfully");
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Book  $book
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Book $book)
+    public function destroy($id)
     {
-        $book->delete();
-        return redirect()->route('books.index')->with('success', "The book My First Book was deleted successfully");
+        $book = Book::whereId($id)->first()->delete();
+        return new BookResource([], 204, "The book My First Book was deleted successfully");
     }
 }

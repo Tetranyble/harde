@@ -6,6 +6,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BookResource extends JsonResource
 {
+    public $statusCode;
+    public $message;
+
+    public function __construct($resource, $statusCode = 200, $message = null)
+    {
+        parent::__construct($resource);
+        $this->statusCode = $statusCode;
+        $this->message =  $message;
+    }
     /**
      * Transform the resource into an array.
      *
@@ -30,7 +39,8 @@ class BookResource extends JsonResource
     {
         return [
             'status' => 'success',
-            'status_code' => 200
+            'status_code' => $this->statusCode,
+            'message' => $this->when($this->message, $this->message)
         ];
     }
 }
