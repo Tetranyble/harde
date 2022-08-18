@@ -18,4 +18,8 @@ class Book extends Model
     public function scopeFilter($query, $request){
         $query->where();
     }
+
+    public function path(){
+        return "/api/v1/books/{$this->id}";
+    }
 }

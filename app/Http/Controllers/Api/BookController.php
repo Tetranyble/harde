@@ -40,7 +40,14 @@ class BookController extends Controller
             return $book;
         });
 
-        return new BookResource(Book::whereId($book->id)->first());
+        //return new BookResource(Book::whereId($book->id)->first(), 201);
+        return response()->json([
+            'status_code' => 201,
+            'status' => 'success',
+            'data' => [
+                'book' => new BookResource(Book::whereId($book->id)->first())
+            ]
+        ], 201);
     }
 
     /**
@@ -84,6 +91,14 @@ class BookController extends Controller
     public function destroy($id)
     {
         $book = Book::whereId($id)->first()->delete();
-        return new BookResource([], 204, "The book My First Book was deleted successfully");
+        //return new BookResource([], 204, "The book My First Book was deleted successfully");
+        return response()->json([
+            'status_code' => 200,
+            'status' => 'success',
+            'message' => 'The book My First Book was deleted successfully',
+            'data' => [
+
+            ]
+        ], 200);
     }
 }

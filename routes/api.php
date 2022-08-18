@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::get('external-books', \App\Http\Controllers\Api\IceAndFireApiController::class)->name('books');
 Route::group(['prefix' => 'v1'], function () {
     Route::resource('/books', BookController::class);
 });

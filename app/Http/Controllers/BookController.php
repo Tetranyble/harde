@@ -53,7 +53,14 @@ class BookController extends Controller
             return $book;
         });
 
-        return new BookResource(Book::whereId($book->id)->first());
+       //return new BookResource(Book::whereId($book->id)->first());
+        return response()->json([
+            'status_code' => 201,
+            'status' => 'success',
+            'data' => [
+                'book' => new BookResource(Book::whereId($book->id)->first())
+            ]
+        ], 201);
 
     }
 
