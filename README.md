@@ -19,13 +19,13 @@ To evaluate this project, simply clone this project repo and run composer comman
 
 ## Setup
 
-- Add an environment variable `"ICE_BASE_URI="anapioficeandfire.com/api/"` to the .env file
+- Add an environment variable `"ICE_BASE_URI="anapioficeandfire.com/api/"` to the `.env` file
 - setup your test database and add the credential to the following environment variables
-    `DB_DATABASE=harde`
-     `DB_USERNAME=root`
-     `DB_PASSWORD=`
+     - `DB_DATABASE=harde`
+     - `DB_USERNAME=root`
+     - `DB_PASSWORD=`
      
-     Note: I am guess you'll be using `MySql` database with it's default port and configuration
+     Note: I am guessing you'll be using `MySql` database with it's default port and configuration
      
 - run `php artisan migrate --seed` to have a working record in your database
 - got to `http:localhost:8000/books`
